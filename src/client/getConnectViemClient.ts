@@ -18,8 +18,8 @@ import {
   polygonZkEvmTestnet
 } from 'viem/chains'
 
-import { ComethWalletActions, comethWalletActions } from './customActions'
-import { musterTestnet } from './customChains'
+import { ConnectWalletActions, connectWalletActions } from '../customActions'
+import { musterTestnet } from '../customChains'
 
 const supportedChains = [
   polygon,
@@ -33,9 +33,9 @@ const supportedChains = [
   musterTestnet
 ]
 
-export type ComethClient = PublicClient<Transport, Chain> & ComethWalletActions
+export type ComethClient = PublicClient<Transport, Chain> & ConnectWalletActions
 
-export const getViemClient = async (
+export const getConnectViemClient = async (
   wallet: ComethWallet,
   rpc?: string
 ): Promise<ComethClient> => {
@@ -49,8 +49,5 @@ export const getViemClient = async (
     transport: http(rpc)
     /* eslint-disable */
     /* @ts-ignore */
-  }).extend(comethWalletActions(wallet))
+  }).extend(connectWalletActions(wallet))
 }
-
-
-
