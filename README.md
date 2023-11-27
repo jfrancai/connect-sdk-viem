@@ -143,6 +143,14 @@ const hash = await connectViemClient.sendTransaction(tx)
 
 This function relays a batch of transaction data to the targeted addresses. The transaction fees can be sponsored as well.
 
+### Get Transaction Receipt
+
+```javascript
+const receipt = await connectViemClient.getTransaction(hash)
+```
+
+This function allows you to retrieve the transaction receipt.
+
 ## Available Account methods
 
 ### Sign Message
