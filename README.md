@@ -1,4 +1,4 @@
-# Account Abstraction SDK
+# Connect SDK
 
 Cometh Connect SDK allows developers to onboard their users with a seedless, gasless experience familiar to Web2 using Biometrics and web2 logins.
 
@@ -37,13 +37,13 @@ await wallet.connect()
 
 This function create a new wallet and connect to the API.
 
-### Instanciate a Wallet
+### Connect an existing Wallet
+
+You can also connect to a previously created wallet. You'll have to provide the wallet address of the previously created wallet.
 
 ```javascript
 await wallet.connect(walletAddress)
 ```
-
-You can also connect to a previously created wallet. You'll have to provide the wallet address of the previously created wallet.
 
 ## Instanciate a Connect Viem Client
 
@@ -71,32 +71,6 @@ const wallet = new ComethWallet({
 await wallet.connect()
 
 const connectViemClient = await getConnectViemClient(wallet)
-```
-
-## Instanciate a Connect Viem Account
-
-```javascript
-import {
-  ComethWallet,
-  ConnectAdaptor,
-  SupportedNetworks
-} from '@cometh/connect-sdk'
-import { getConnectViemAccount } from '@cometh/connect-sdk-viem'
-
-const walletAdaptor = new ConnectAdaptor({
-  chainId: SupportedNetworks.POLYGON,
-  apiKey: API_KEY
-})
-
-const wallet = new ComethWallet({
-  authAdapter: walletAdaptor,
-  apiKey: API_KEY,
-  rpcUrl: RPC_URL
-})
-
-await wallet.connect()
-
-const connectViemAccount = await getConnectViemAccount(wallet)
 ```
 
 ## Available Client methods
@@ -150,6 +124,32 @@ const receipt = await connectViemClient.getTransaction(hash)
 ```
 
 This function allows you to retrieve the transaction receipt.
+
+## Instanciate a Connect Viem Account
+
+```javascript
+import {
+  ComethWallet,
+  ConnectAdaptor,
+  SupportedNetworks
+} from '@cometh/connect-sdk'
+import { getConnectViemAccount } from '@cometh/connect-sdk-viem'
+
+const walletAdaptor = new ConnectAdaptor({
+  chainId: SupportedNetworks.POLYGON,
+  apiKey: API_KEY
+})
+
+const wallet = new ComethWallet({
+  authAdapter: walletAdaptor,
+  apiKey: API_KEY,
+  rpcUrl: RPC_URL
+})
+
+await wallet.connect()
+
+const connectViemAccount = await getConnectViemAccount(wallet)
+```
 
 ## Available Account methods
 
