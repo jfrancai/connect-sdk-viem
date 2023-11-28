@@ -35,10 +35,10 @@ const supportedChains = [
 
 export type ComethClient = PublicClient<Transport, Chain> & ConnectWalletActions
 
-export const getConnectViemClient = async (
+export const getConnectViemClient = (
   wallet: ComethWallet,
   rpc?: string
-): Promise<ComethClient> => {
+): ComethClient => {
   const chain: Chain = extractChain({
     chains: supportedChains,
     id: wallet.chainId as any

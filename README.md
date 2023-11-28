@@ -120,7 +120,7 @@ This function relays a batch of transaction data to the targeted addresses. The 
 ### Get Transaction Receipt
 
 ```javascript
-const receipt = await connectViemClient.getTransaction(hash)
+const receipt = connectViemClient.getTransaction(hash)
 ```
 
 This function allows you to retrieve the transaction receipt.
@@ -148,7 +148,7 @@ const wallet = new ComethWallet({
 
 await wallet.connect()
 
-const connectViemAccount = await getConnectViemAccount(wallet)
+const connectViemAccount = getConnectViemAccount(wallet)
 ```
 
 ## Available Account methods

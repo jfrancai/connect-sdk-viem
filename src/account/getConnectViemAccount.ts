@@ -9,9 +9,9 @@ import {
 } from 'viem'
 import { toAccount } from 'viem/accounts'
 
-export const getConnectViemAccount = async (
+export const getConnectViemAccount = (
   wallet: ComethWallet
-): Promise<PrivateKeyAccount> => {
+): PrivateKeyAccount => {
   const address = wallet.getAddress() as Address
   const source: CustomSource = {
     address,
