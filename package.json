@@ -1,6 +1,6 @@
 {
   "name": "@cometh/connect-sdk-viem",
-  "version": "1.0.0",
+  "version": "1.0.0-dev.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Viem SDK Cometh Connect",
@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/cometh-game/connect-sdk-viem/issues"
   },
-  "homepage": "https://github.com/cometh-game/connect-sdk#readme",
+  "homepage": "https://github.com/cometh-game/connect-sdk-viem#readme",
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.0",
     "@tsconfig/recommended": "^1.0.2",
