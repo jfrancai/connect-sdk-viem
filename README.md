@@ -70,7 +70,7 @@ const wallet = new ComethWallet({
 
 await wallet.connect()
 
-const connectViemClient = await getConnectViemClient(wallet)
+const connectViemClient = getConnectViemClient(wallet)
 ```
 
 ## Available Client methods
