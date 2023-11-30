@@ -20,7 +20,7 @@ export const getConnectViemAccount = (
     }: {
       message: SignableMessage
     }): Promise<Hash> {
-      const signedMessage = wallet.signMessage(message.toString())
+      const signedMessage = await wallet.signMessage(message.toString())
       return `0x${signedMessage}`
     },
     /* eslint-disable */
@@ -32,7 +32,7 @@ export const getConnectViemAccount = (
         data: transaction.data as string
       })
 
-      return wallet.signTransaction(safeTxDataTyped)
+      return await wallet.signTransaction(safeTxDataTyped)
     },
 
     async signTypedData({ domain, types, primaryType, message }) {

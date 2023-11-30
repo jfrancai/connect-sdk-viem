@@ -1,9 +1,15 @@
 {
   "name": "@cometh/connect-sdk-viem",
-  "version": "1.0.0-dev.1",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Viem SDK Cometh Connect",
+  "keywords": [
+    "viem",
+    "smart-wallet",
+    "blockchain",
+    "ethereum"
+  ],
   "files": [
     "dist/**/*"
   ],

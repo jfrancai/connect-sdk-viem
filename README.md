@@ -120,7 +120,7 @@ This function relays a batch of transaction data to the targeted addresses. The 
 ### Get Transaction Receipt
 
 ```javascript
-const receipt = connectViemClient.getTransaction(hash)
+const receipt = await connectViemClient.getTransaction(hash)
 ```
 
 This function allows you to retrieve the transaction receipt.
@@ -156,7 +156,7 @@ const connectViemAccount = getConnectViemAccount(wallet)
 ### Sign Message
 
 ```javascript
-const signature = await connectViemAccount.signMessage('hello')
+const signature = await connectViemAccount.signMessage({ message: 'hello' })
 ```
 
 Sign the given message using the EOA, owner of the smart wallet.
