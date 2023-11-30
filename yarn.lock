@@ -364,10 +364,10 @@
   resolved "https://registry.yarnpkg.com/@cbor-extract/cbor-extract-win32-x64/-/cbor-extract-win32-x64-2.1.1.tgz#21b11a1a3f18c3e7d62fd5f87438b7ed2c64c1f7"
   integrity sha512-2Niq1C41dCRIDeD8LddiH+mxGlO7HJ612Ll3D/E73ZWBmycued+8ghTr/Ho3CMOWPUEr08XtyBMVXAjqF+TcKw==
 
-"@cometh/connect-sdk@^1.2.3-dev.1":
-  version "1.2.3-dev.1"
-  resolved "https://registry.yarnpkg.com/@cometh/connect-sdk/-/connect-sdk-1.2.3-dev.1.tgz#6eda5c45a178269d8ed981519ac8d0d9bd9e185e"
-  integrity sha512-A9ZDo+ujtcgTmA6cN7N+HRSna27ONiUOm+WsMQFzp4HTWN0xqOdCshOwH2cJsHprpHlp3oUtMYKXm4qh5tZiGQ==
+"@cometh/connect-sdk@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@cometh/connect-sdk/-/connect-sdk-1.2.3.tgz#168a55a92339c071e45291194e25dadba56e35c6"
+  integrity sha512-Vzxu9F6gG3tboyYdkZqKM6f2yLqPeAdP7br/1iGuqzf5VOgkk8Ec4XxhfBqzXTRSEpqlN8pxQo65iJEPiD5s4A==
   dependencies:
     "@alembic/ui" "^1.5.4"
     "@babel/traverse" "^7.23.4"
