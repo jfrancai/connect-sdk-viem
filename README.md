@@ -1,4 +1,4 @@
-# Connect SDK
+# Connect Viem SDK
 
 Cometh Connect Viem SDK allows developers to onboard their users with a seedless, gasless experience familiar to Web2 using Biometrics and web2 logins.
 
@@ -45,9 +45,9 @@ You can also connect to a previously created wallet. You'll have to provide the 
 await wallet.connect(walletAddress)
 ```
 
-## Instanciate a Connect Viem Client
+## Instanciate a Connect viem Client
 
-After creating (or reconnecting) to a connect wallet, you can now create a connectViemClient or connectViemAccount:
+After creating (or reconnecting) to a connect wallet, you can now create a connectViemClient:
 
 ```javascript
 import {
@@ -101,13 +101,6 @@ This function relays the transaction data to the target address. The transaction
 ### Send Batch transactions
 
 ```javascript
-import { encodeFunctionData } from 'viem'
-
-const txCallData = encodeFunctionData({
-  abi: CONTRACT_ABI,
-  functionName: CONTRACT_METHOD
-})
-
 const txBatch = [
   { to: DESTINATION, value: VALUE, data: txCallData },
   { to: DESTINATION, value: VALUE, data: txCallData }
@@ -164,13 +157,6 @@ Sign the given message using the EOA, owner of the smart wallet.
 ### Sign Transaction
 
 ```javascript
-import { encodeFunctionData } from 'viem'
-
-const txCallData = encodeFunctionData({
-  abi: CONTRACT_ABI,
-  functionName: CONTRACT_METHOD
-})
-
 const tx = { to: DESTINATION, value: VALUE, data: txCallData }
 
 const signature = await connectViemAccount.signTransaction(tx)
