@@ -55,7 +55,7 @@ const _catchFailureEvent = async (
 }
 
 export const getTransaction = async (
-  client: PublicClient<Transport, Chain>,
+  client: any,
   wallet: ComethWallet,
   safeTxHash: Hash
 ): Promise<TransactionReceipt> => {
@@ -84,6 +84,7 @@ export const getTransaction = async (
   if (txSuccessEvent) {
     let txResponse: TransactionReceipt | null = null
     while (txResponse === null) {
+      sleep(1000)
       try {
         txResponse = await client.getTransactionReceipt({
           hash: txSuccessEvent.transactionHash as Hash
@@ -91,8 +92,6 @@ export const getTransaction = async (
       } catch (err) {
         console.log(err)
       }
-
-      sleep(1000)
     }
 
     return txResponse
@@ -100,6 +99,7 @@ export const getTransaction = async (
   if (txFailureEvent) {
     let txResponse: TransactionReceipt | null = null
     while (txResponse === null) {
+      sleep(1000)
       try {
         txResponse = await client.getTransactionReceipt({
           hash: txSuccessEvent.transactionHash as Hash
@@ -107,7 +107,6 @@ export const getTransaction = async (
       } catch (err) {
         console.log(err)
       }
-      sleep(1000)
     }
 
     return txResponse
