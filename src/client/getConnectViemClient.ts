@@ -1,12 +1,13 @@
 import { ComethWallet } from '@cometh/connect-sdk'
 import {
+  Account,
   Chain,
+  Client,
   createPublicClient,
-  extractChain,
   http,
-  PublicClient,
   Transport
 } from 'viem'
+import { Prettify } from 'viem/_types/types/utils'
 import {
   avalanche,
   avalancheFuji,
@@ -18,7 +19,8 @@ import {
   polygonZkEvmTestnet
 } from 'viem/chains'
 
-import { ConnectWalletActions, connectWalletActions } from '../customActions'
+import { connectWalletActions } from '../customActions'
+import { ComethAccountActions } from '../customActions/connectWalletActions'
 import { musterTestnet, redstoneHolesky } from '../customChains'
 
 const supportedChains = [
@@ -34,21 +36,35 @@ const supportedChains = [
   redstoneHolesky
 ]
 
-export type ComethClient = PublicClient<Transport, Chain> & ConnectWalletActions
+export type ConnectClient<
+  transport extends Transport = Transport,
+  chain extends Chain | undefined = Chain | undefined,
+  account extends Account | undefined = Account | undefined
+> = Prettify<
+  Client<
+    transport,
+    chain,
+    account,
+    undefined,
+    ComethAccountActions<chain, account>
+  >
+>
 
-export const getConnectViemClient = (
-  wallet: ComethWallet,
+export type ConnectClientParams = {
+  wallet: ComethWallet
   rpc?: string
-): ComethClient => {
-  const chain: Chain = extractChain({
-    chains: supportedChains,
-    id: wallet.chainId as any
-  })
+}
+
+export const getConnectViemClient = ({
+  wallet,
+  rpc
+}: ConnectClientParams): ConnectClient => {
+  const chain = supportedChains.find(
+    (chain) => chain.id === wallet.chainId
+  ) as Chain
 
   return createPublicClient({
     chain,
     transport: http(rpc)
-    /* eslint-disable */
-    /* @ts-ignore */
   }).extend(connectWalletActions(wallet))
 }

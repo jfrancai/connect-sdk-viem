@@ -10,6 +10,7 @@ import {
   Transport
 } from 'viem'
 
+import { ConnectClient } from '../client'
 import { sleep } from '../utils/utils'
 
 const _catchSuccessEvent = async (
@@ -54,11 +55,15 @@ const _catchFailureEvent = async (
   return filteredTransactionEvent
 }
 
-export const getTransaction = async (
-  client: PublicClient<Transport, Chain>,
-  wallet: ComethWallet,
+export const getTransaction = async ({
+  client,
+  wallet,
+  safeTxHash
+}: {
+  client: any
+  wallet: ComethWallet
   safeTxHash: Hash
-): Promise<TransactionReceipt> => {
+}): Promise<TransactionReceipt> => {
   const currentBlockNumber = await client.getBlockNumber()
   const from = wallet.getAddress() as Address
 
@@ -84,6 +89,7 @@ export const getTransaction = async (
   if (txSuccessEvent) {
     let txResponse: TransactionReceipt | null = null
     while (txResponse === null) {
+      sleep(1000)
       try {
         txResponse = await client.getTransactionReceipt({
           hash: txSuccessEvent.transactionHash as Hash
@@ -91,8 +97,6 @@ export const getTransaction = async (
       } catch (err) {
         console.log(err)
       }
-
-      sleep(1000)
     }
 
     return txResponse
@@ -100,6 +104,7 @@ export const getTransaction = async (
   if (txFailureEvent) {
     let txResponse: TransactionReceipt | null = null
     while (txResponse === null) {
+      sleep(1000)
       try {
         txResponse = await client.getTransactionReceipt({
           hash: txSuccessEvent.transactionHash as Hash
@@ -107,12 +112,11 @@ export const getTransaction = async (
       } catch (err) {
         console.log(err)
       }
-      sleep(1000)
     }
 
     return txResponse
   }
 
   sleep(2000)
-  return getTransaction(client, wallet, safeTxHash)
+  return getTransaction({ client, wallet, safeTxHash })
 }
