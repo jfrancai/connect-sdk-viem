@@ -1,11 +1,13 @@
 import {
   ComethWallet,
   ConnectAdaptor,
-  SupportedNetworks
+  SupportedNetworks,
+  UIConfig,
+  webAuthnOptions
 } from '@cometh/connect-sdk'
 import { a } from '@wagmi/connectors/dist/base-e6cfa360'
 import { toHex } from 'viem'
-import { Chain, Connector } from 'wagmi'
+import { Chain, Connector, ConnectorNotFoundError } from 'wagmi'
 
 import {
   ConnectClient,
@@ -14,9 +16,25 @@ import {
 
 export interface WagmiConfigConnectorParams {
   apiKey: string
-  disableEoaFallback?: boolean
   walletAddress?: string
+  disableEoaFallback?: boolean
+  encryptionSalt?: string
+  webAuthnOptions?: webAuthnOptions
+  passKeyName?: string
+  uiConfig?: UIConfig
   baseUrl?: string
+  rpcUrl?: string
+}
+
+export type ComethConnectorOptions = WagmiConfigConnectorParams & {
+  /**
+   *
+   * This flag simulates the disconnect behavior by keeping track of connection status in storage
+   * and only autoconnecting when previously connected by user action (e.g. explicitly choosing to connect).
+   *
+   * @default true
+   */
+  shimDisconnect?: boolean
 }
 
 function _isSupportedNetwork(value: string): value is SupportedNetworks {
@@ -25,7 +43,7 @@ function _isSupportedNetwork(value: string): value is SupportedNetworks {
 
 export class ComethConnectConnector extends Connector<
   undefined,
-  WagmiConfigConnectorParams
+  ComethConnectorOptions
 > {
   id = 'cometh-connect'
   name = 'Cometh Connect'
@@ -33,6 +51,8 @@ export class ComethConnectConnector extends Connector<
   wallet: ComethWallet
   client: ConnectClient
   walletAddress?: string
+
+  protected shimDisconnectKey = `${this.id}.shimDisconnect`
 
   constructor({
     chains,
@@ -42,14 +62,24 @@ export class ComethConnectConnector extends Connector<
     options: WagmiConfigConnectorParams
   }) {
     const options = {
-      shimDisconnect: false,
+      shimDisconnect: true,
       ...options_
     }
     super({
       chains,
       options
     })
-    const { apiKey, disableEoaFallback, baseUrl, walletAddress } = this.options
+    const {
+      apiKey,
+      walletAddress,
+      disableEoaFallback,
+      encryptionSalt,
+      webAuthnOptions,
+      passKeyName,
+      baseUrl,
+      uiConfig,
+      rpcUrl
+    } = this.options
 
     const chainId = toHex(this.chains[0].id)
 
@@ -59,14 +89,21 @@ export class ComethConnectConnector extends Connector<
           chainId,
           apiKey,
           disableEoaFallback,
+          encryptionSalt,
+          webAuthnOptions,
+          passKeyName,
+          rpcUrl,
           baseUrl
         }),
         apiKey,
+        uiConfig,
+        rpcUrl,
         baseUrl
       })
 
       this.client = getConnectViemClient({ wallet: this.wallet })
       this.walletAddress = walletAddress
+      this.ready = true
     } else {
       throw new Error('Network not supported')
     }
@@ -88,6 +125,9 @@ export class ComethConnectConnector extends Connector<
       }
     }
 
+    if (this.options.shimDisconnect)
+      this.storage?.setItem(this.shimDisconnectKey, true)
+
     return {
       account: this.wallet.getAddress() as `0x${string}`,
       chain: {
@@ -97,6 +137,10 @@ export class ComethConnectConnector extends Connector<
     }
   }
   disconnect(): Promise<void> {
+    // Remove shim signalling wallet is disconnected
+    if (this.options.shimDisconnect)
+      this.storage?.removeItem(this.shimDisconnectKey)
+
     return this.wallet.logout()
   }
   async getAccount(): Promise<`0x${string}`> {
@@ -113,8 +157,21 @@ export class ComethConnectConnector extends Connector<
   async getWalletClient(): Promise<any> {
     return this.client
   }
-  async isAuthorized(): Promise<boolean> {
-    return false
+  async isAuthorized() {
+    try {
+      if (
+        this.options.shimDisconnect &&
+        // If shim does not exist in storage, wallet is disconnected
+        !this.storage?.getItem(this.shimDisconnectKey)
+      )
+        return false
+
+      const provider = await this.getProvider()
+      if (!provider) throw new ConnectorNotFoundError()
+      return true
+    } catch {
+      return false
+    }
   }
   protected onAccountsChanged(): void {
     throw new Error('method is not available')
