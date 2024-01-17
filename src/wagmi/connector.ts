@@ -5,7 +5,6 @@ import {
   UIConfig,
   webAuthnOptions
 } from '@cometh/connect-sdk'
-import { a } from '@wagmi/connectors/dist/base-e6cfa360'
 import { toHex } from 'viem'
 import { Chain, Connector, ConnectorNotFoundError } from 'wagmi'
 
@@ -109,7 +108,8 @@ export class ComethConnectConnector extends Connector<
     }
   }
 
-  async connect(): Promise<Required<a>> {
+  /* eslint-disable */
+  async connect() {
     if (this.walletAddress) {
       await this.wallet.connect(this.walletAddress)
       window.localStorage.setItem('walletAddress', this.walletAddress)
