@@ -16,6 +16,7 @@ import {
   SendTransactionWithConnectParameters
 } from './sendTransaction'
 import { sendTransactions, SendTransactionsWithConnectParameters } from './sendTransactions'
+import { signMessage, SignMessageReturnType, SignMessageWithConnectParameters } from './signMessage'
 import { simulateContract, SimulateContractWithConnectParameters } from './simulateContract'
 import {
   writeContract,
@@ -196,6 +197,10 @@ export type ComethAccountActions<
     args: SendTransactionsWithConnectParameters<TSmartAccount>
   ) => ReturnType<typeof sendTransactions<TChain, TSmartAccount>>,
 
+  signMessage: (
+    args: SignMessageWithConnectParameters<TSmartAccount>
+  ) => ReturnType<typeof signMessage>,
+
   simulateContract: <
     TChain extends Chain | undefined,
     const TAbi extends Abi | readonly unknown[],
@@ -239,6 +244,11 @@ export const connectWalletActions =
           ...args,
           wallet
         } as WriteContractWithConnectParameters),
+      signMessage: (args) =>
+        signMessage(client, {
+          ...args,
+          wallet
+        } as SignMessageWithConnectParameters),
       simulateContract: (args) =>
         simulateContract(client, {
           ...args,
