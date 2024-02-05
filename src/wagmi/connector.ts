@@ -1,7 +1,6 @@
 import {
   ComethWallet,
   ConnectAdaptor,
-  SupportedNetworks,
   UIConfig,
   webAuthnOptions
 } from '@cometh/connect-sdk'
@@ -12,6 +11,7 @@ import {
   ConnectClient,
   getConnectViemClient
 } from '../client/getConnectViemClient'
+import { isSupportedNetwork } from '../utils/utils'
 
 export interface WagmiConfigConnectorParams {
   apiKey: string
@@ -34,10 +34,6 @@ export type ComethConnectorOptions = WagmiConfigConnectorParams & {
    * @default true
    */
   shimDisconnect?: boolean
-}
-
-function _isSupportedNetwork(value: string): value is SupportedNetworks {
-  return Object.values(SupportedNetworks).includes(value as any)
 }
 
 export class ComethConnectConnector extends Connector<
@@ -85,7 +81,7 @@ export class ComethConnectConnector extends Connector<
 
     const chainId = toHex(this.chains[0].id)
 
-    if (_isSupportedNetwork(chainId)) {
+    if (isSupportedNetwork(chainId)) {
       this.wallet = new ComethWallet({
         authAdapter: new ConnectAdaptor({
           chainId,

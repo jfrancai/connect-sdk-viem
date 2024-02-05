@@ -1,3 +1,4 @@
+import { SupportedNetworks } from '@cometh/connect-sdk'
 import { toHex } from 'viem'
 
 export const sleep = async (msInterval: number): Promise<void> => {
@@ -27,4 +28,8 @@ export function deepHexlify(obj: any): any {
     },
     {}
   )
+}
+
+export function isSupportedNetwork(value: string): value is SupportedNetworks {
+  return Object.values(SupportedNetworks).includes(value as any)
 }
