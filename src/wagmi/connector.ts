@@ -57,9 +57,12 @@ export class ComethConnectConnector extends Connector<
     chains,
     options: options_
   }: {
-    chains?: Chain[]
+    chains: Chain[]
     options: WagmiConfigConnectorParams
   }) {
+    if (chains.length !== 1)
+      throw new Error('Cometh Connect does not support multi network in config')
+
     const options = {
       shimDisconnect: true,
       ...options_
@@ -100,7 +103,7 @@ export class ComethConnectConnector extends Connector<
         baseUrl
       })
 
-      this.client = getConnectViemClient({ wallet: this.wallet })
+      this.client = getConnectViemClient({ wallet: this.wallet, apiKey })
       this.walletAddress = walletAddress
       this.ready = true
     } else {
@@ -120,8 +123,7 @@ export class ComethConnectConnector extends Connector<
         await this.wallet.connect(localStorageAddress)
       } else {
         await this.wallet.connect()
-        const walletAddress = await this.wallet.getAddress()
-        window.localStorage.setItem('walletAddress', walletAddress)
+        window.localStorage.setItem('walletAddress', this.wallet.getAddress())
       }
     }
 
