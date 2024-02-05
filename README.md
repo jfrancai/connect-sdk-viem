@@ -105,7 +105,7 @@ const txBatch = [
   { to: DESTINATION, value: VALUE, data: txCallData },
   { to: DESTINATION, value: VALUE, data: txCallData }
 ]
-const txHash = await connectViemClient.sendTransaction(tx)
+const txHash = await connectViemClient.sendBatchTransactions(tx)
 ```
 
 This function relays a batch of transaction data to the targeted addresses. The transaction fees can be sponsored as well.
