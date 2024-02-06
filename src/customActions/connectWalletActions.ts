@@ -266,4 +266,4 @@ export const connectWalletActions =
         } as SimulateContractWithConnectParameters)
     })
 
-export { getTransaction, sendBatchTransactions, sendTransaction, simulateContract, verifyMessage,writeContract }
+export { getTransaction, sendBatchTransactions, sendTransaction, simulateContract, verifyMessage, writeContract }
