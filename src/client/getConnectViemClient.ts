@@ -19,9 +19,8 @@ import {
   polygonZkEvmTestnet
 } from 'viem/chains'
 
-import { connectWalletActions } from '../customActions'
-import { ComethAccountActions } from '../customActions/connectWalletActions'
-import { musterTestnet, redstoneHolesky } from '../customChains'
+import { ComethAccountActions, connectWalletActions } from '../customActions'
+import { muster, musterTestnet, redstoneHolesky } from '../customChains'
 
 const supportedChains = [
   polygon,
@@ -33,6 +32,7 @@ const supportedChains = [
   polygonZkEvm,
   polygonZkEvmTestnet,
   musterTestnet,
+  muster,
   redstoneHolesky
 ]
 
@@ -52,11 +52,13 @@ export type ConnectClient<
 
 export type ConnectClientParams = {
   wallet: ComethWallet
+  apiKey: string
   rpc?: string
 }
 
 export const getConnectViemClient = ({
   wallet,
+  apiKey,
   rpc
 }: ConnectClientParams): ConnectClient => {
   const chain = supportedChains.find(
@@ -66,5 +68,5 @@ export const getConnectViemClient = ({
   return createPublicClient({
     chain,
     transport: http(rpc)
-  }).extend(connectWalletActions(wallet))
+  }).extend(connectWalletActions(wallet, apiKey))
 }

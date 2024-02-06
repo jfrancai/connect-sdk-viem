@@ -105,7 +105,7 @@ const txBatch = [
   { to: DESTINATION, value: VALUE, data: txCallData },
   { to: DESTINATION, value: VALUE, data: txCallData }
 ]
-const txHash = await connectViemClient.sendTransaction(tx)
+const txHash = await connectViemClient.sendBatchTransactions(tx)
 ```
 
 This function relays a batch of transaction data to the targeted addresses. The transaction fees can be sponsored as well.
@@ -145,6 +145,18 @@ const signature = await connectViemAccount.signMessage({ message: 'hello' })
 ```
 
 Sign the given message using the EOA, owner of the smart wallet.
+
+### Verify Message
+
+```javascript
+const signature = await connectViemAccount.verifyMessage({
+  message: 'hello',
+  address,
+  signature
+})
+```
+
+Verify the given signature and message signed by the the smart wallet.
 
 ### Sign Transaction
 

@@ -1,7 +1,6 @@
 import {
   ComethWallet,
   ConnectAdaptor,
-  SupportedNetworks,
   UIConfig,
   webAuthnOptions
 } from '@cometh/connect-sdk'
@@ -12,6 +11,7 @@ import {
   ConnectClient,
   getConnectViemClient
 } from '../client/getConnectViemClient'
+import { isSupportedNetwork } from '../utils/utils'
 
 export interface WagmiConfigConnectorParams {
   apiKey: string
@@ -36,10 +36,6 @@ export type ComethConnectorOptions = WagmiConfigConnectorParams & {
   shimDisconnect?: boolean
 }
 
-function _isSupportedNetwork(value: string): value is SupportedNetworks {
-  return Object.values(SupportedNetworks).includes(value as any)
-}
-
 export class ComethConnectConnector extends Connector<
   undefined,
   ComethConnectorOptions
@@ -57,9 +53,12 @@ export class ComethConnectConnector extends Connector<
     chains,
     options: options_
   }: {
-    chains?: Chain[]
+    chains: Chain[]
     options: WagmiConfigConnectorParams
   }) {
+    if (chains.length !== 1)
+      throw new Error('Cometh Connect does not support multi network in config')
+
     const options = {
       shimDisconnect: true,
       ...options_
@@ -82,7 +81,7 @@ export class ComethConnectConnector extends Connector<
 
     const chainId = toHex(this.chains[0].id)
 
-    if (_isSupportedNetwork(chainId)) {
+    if (isSupportedNetwork(chainId)) {
       this.wallet = new ComethWallet({
         authAdapter: new ConnectAdaptor({
           chainId,
@@ -100,7 +99,7 @@ export class ComethConnectConnector extends Connector<
         baseUrl
       })
 
-      this.client = getConnectViemClient({ wallet: this.wallet })
+      this.client = getConnectViemClient({ wallet: this.wallet, apiKey })
       this.walletAddress = walletAddress
       this.ready = true
     } else {
@@ -120,8 +119,7 @@ export class ComethConnectConnector extends Connector<
         await this.wallet.connect(localStorageAddress)
       } else {
         await this.wallet.connect()
-        const walletAddress = await this.wallet.getAddress()
-        window.localStorage.setItem('walletAddress', walletAddress)
+        window.localStorage.setItem('walletAddress', this.wallet.getAddress())
       }
     }
 
