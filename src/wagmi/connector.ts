@@ -1,6 +1,7 @@
 import {
   ComethWallet,
   ConnectAdaptor,
+  SupportedNetworks,
   UIConfig,
   webAuthnOptions
 } from '@cometh/connect-sdk'
@@ -36,16 +37,20 @@ export type ComethConnectorOptions = WagmiConfigConnectorParams & {
   shimDisconnect?: boolean
 }
 
+type ConnectFunctionConfig = {
+  /** Target chain to connect to. */
+  chainId?: number
+}
+
 export class ComethConnectConnector extends Connector<
   undefined,
   ComethConnectorOptions
 > {
   id = 'cometh-connect'
   name = 'Cometh Connect'
-  ready = true
-  wallet: ComethWallet
-  client: ConnectClient
-  walletAddress?: string
+  ready = false
+  wallet?: ComethWallet
+  client?: ConnectClient
 
   protected shimDisconnectKey = `${this.id}.shimDisconnect`
 
@@ -56,24 +61,21 @@ export class ComethConnectConnector extends Connector<
     chains: Chain[]
     options: WagmiConfigConnectorParams
   }) {
-    if (chains.length !== 1)
-      throw new Error('Cometh Connect does not support multi network in config')
-
     const options = {
       shimDisconnect: true,
       ...options_
     }
 
-    chains.forEach((chain) => {
-      if (!isSupportedNetwork(toHex(chain.id)))
-        console.warn(`${chain.name} not yet supported by cometh connect`)
-    })
-
     super({
-      chains: chains.filter((chain) => isSupportedNetwork(toHex(chain.id))),
+      chains,
       options
     })
 
+    this.ready = true
+  }
+
+  /* eslint-disable */
+  async connect({ chainId }: ConnectFunctionConfig = {}) {
     const {
       apiKey,
       walletAddress,
@@ -86,39 +88,30 @@ export class ComethConnectConnector extends Connector<
       rpcUrl
     } = this.options
 
-    const chainId = toHex(this.chains[0].id)
+    const selectedChainId = this._getSelectedChainId(chainId)
 
-    if (isSupportedNetwork(chainId)) {
-      this.wallet = new ComethWallet({
-        authAdapter: new ConnectAdaptor({
-          chainId,
-          apiKey,
-          disableEoaFallback,
-          encryptionSalt,
-          webAuthnOptions,
-          passKeyName,
-          rpcUrl,
-          baseUrl
-        }),
+    this.wallet = new ComethWallet({
+      authAdapter: new ConnectAdaptor({
+        chainId: selectedChainId,
         apiKey,
-        uiConfig,
+        disableEoaFallback,
+        encryptionSalt,
+        webAuthnOptions,
+        passKeyName,
         rpcUrl,
         baseUrl
-      })
+      }),
+      apiKey,
+      uiConfig,
+      rpcUrl,
+      baseUrl
+    })
 
-      this.client = getConnectViemClient({ wallet: this.wallet, apiKey })
-      this.walletAddress = walletAddress
-      this.ready = true
-    } else {
-      throw new Error('Network not supported')
-    }
-  }
+    this.client = getConnectViemClient({ wallet: this.wallet, apiKey })
 
-  /* eslint-disable */
-  async connect() {
-    if (this.walletAddress) {
-      await this.wallet.connect(this.walletAddress)
-      window.localStorage.setItem('walletAddress', this.walletAddress)
+    if (walletAddress) {
+      await this.wallet.connect(walletAddress)
+      window.localStorage.setItem('walletAddress', walletAddress)
     } else {
       const localStorageAddress = window.localStorage.getItem('walletAddress')
 
@@ -133,10 +126,7 @@ export class ComethConnectConnector extends Connector<
     if (this.options.shimDisconnect)
       this.storage?.setItem(this.shimDisconnectKey, true)
 
-    console.warn(`Connected to ${this.chains[0].name}`)
-
-    if (this.chains.length > 1)
-      console.warn(`Cometh connect does not support multichain`)
+    console.warn(`Connected to ${selectedChainId}`)
 
     return {
       account: this.wallet.getAddress() as `0x${string}`,
@@ -146,7 +136,39 @@ export class ComethConnectConnector extends Connector<
       }
     }
   }
+
+  private _getSelectedChainId(chainId?: number) {
+    if (chainId) {
+      const providedChainId = toHex(chainId)
+
+      if (!isSupportedNetwork(providedChainId))
+        throw new Error('Network not supported')
+
+      return providedChainId
+    } else {
+      const supportedChains = this.chains.reduce(
+        (chains: SupportedNetworks[], chain: Chain) => {
+          const chainId = toHex(chain.id)
+          if (!isSupportedNetwork(chainId)) {
+            console.warn(`${chain.name} not yet supported by cometh connect`)
+          } else {
+            chains.push(chainId)
+          }
+          return chains
+        },
+        []
+      )
+      if (supportedChains.length === 0)
+        throw new Error('Cometh Connect does not support the provided chains')
+
+      if (supportedChains.length > 1)
+        console.warn(`Cometh connect does not support multichain`)
+
+      return supportedChains[0]
+    }
+  }
   disconnect(): Promise<void> {
+    if (!this.wallet) throw new Error('no')
     // Remove shim signalling wallet is disconnected
     if (this.options.shimDisconnect)
       this.storage?.removeItem(this.shimDisconnectKey)
@@ -154,10 +176,15 @@ export class ComethConnectConnector extends Connector<
     return this.wallet.logout()
   }
   async getAccount(): Promise<`0x${string}`> {
+    if (!this.wallet) throw new Error('no')
     return this.wallet.getAddress() as `0x${string}`
   }
   async getChainId(): Promise<number> {
-    return await this.wallet.chainId
+    if (!this.wallet) {
+      return this.chains[0].id
+    } else {
+      return await this.wallet.chainId
+    }
   }
   /* eslint-disable */
   async getProvider(): Promise<any> {
