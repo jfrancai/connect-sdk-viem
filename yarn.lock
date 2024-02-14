@@ -185,10 +185,10 @@
     stream-browserify "^3.0.0"
     util "^0.12.4"
 
-"@cometh/connect-sdk@^1.2.11":
-  version "1.2.11"
-  resolved "https://registry.yarnpkg.com/@cometh/connect-sdk/-/connect-sdk-1.2.11.tgz#cb797d59ce48d9b29eee52fb24f80f2cf1f9c9ca"
-  integrity sha512-wCGzM7tbbnEAl1QnivWjVU20VdhQZj45W1KRoRaHsZfFsfiiA7xCYMmSwlSpRZRvgXW/vIuH1RaFsKQzklD1/Q==
+"@cometh/connect-sdk@^1.2.12":
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/@cometh/connect-sdk/-/connect-sdk-1.2.12.tgz#b380c9224cde8773c57a5c8aec2555a019f36a5f"
+  integrity sha512-SlG8AI9ruW/05ExJ9+8l8Xd/N/ZmSLkYmOUOnBgzJmxkz6DRu5yCJ3DHkNnFP0YTvzmX3ucl/IH+6w4eXmP1hQ==
   dependencies:
     "@alembic/ui" "^1.5.4"
     "@babel/traverse" "^7.23.4"
@@ -6299,7 +6299,7 @@ valtio@1.11.2:
     proxy-compare "2.5.1"
     use-sync-external-store "1.2.0"
 
-viem@^1.0.0, viem@^1.16.2, viem@^1.6.0:
+viem@^1.0.0, viem@^1.19.11, viem@^1.6.0:
   version "1.21.4"
   resolved "https://registry.yarnpkg.com/viem/-/viem-1.21.4.tgz#883760e9222540a5a7e0339809202b45fe6a842d"
   integrity sha512-BNVYdSaUjeS2zKQgPs+49e5JKocfo60Ib2yiXOWBT6LuVxY1I/6fFX3waEtpXvL1Xn4qu+BVitVtMh9lyThyhQ==
@@ -6313,7 +6313,7 @@ viem@^1.0.0, viem@^1.16.2, viem@^1.6.0:
     isows "1.0.3"
     ws "8.13.0"
 
-wagmi@^1.4.7:
+wagmi@^1.4.13:
   version "1.4.13"
   resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-1.4.13.tgz#dc8dc077c7c2195877d7e33477b0417f5d2add4f"
   integrity sha512-AScVYFjqNt1wMgL99Bob7MLdhoTZ3XKiOZL5HVBdy4W1sh7QodA3gQ8IsmTuUrQ7oQaTxjiXEhwg7sWNrPBvJA==
