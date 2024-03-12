@@ -4,9 +4,13 @@ import {
   Account,
   Chain,
   Client,
+  ContractFunctionArgs,
+  ContractFunctionName,
+  PublicActions,
   SendTransactionParameters,
   SimulateContractParameters,
   Transport,
+  WalletActions,
   WriteContractParameters
 } from 'viem'
 
@@ -18,11 +22,39 @@ import {
 } from './sendTransaction'
 import { signMessage, SignMessageWithConnectParameters } from './signMessage'
 import { simulateContract, SimulateContractWithConnectParameters } from './simulateContract'
-import { verifyMessage, VerifyMessageWithConnectParameters } from './verifyMessage'
+import { verifyMessage,VerifyMessageWithConnectParameters } from './verifyMessage'
 import {
   writeContract,
   WriteContractWithConnectParameters
 } from './writeContract'
+
+export type ExtendableProtectedActions = Pick<
+  PublicActions,
+  | 'call'
+  | 'createContractEventFilter'
+  | 'createEventFilter'
+  | 'estimateContractGas'
+  | 'estimateGas'
+  | 'getBlock'
+  | 'getBlockNumber'
+  | 'getChainId'
+  | 'getContractEvents'
+  | 'getEnsText'
+  | 'getFilterChanges'
+  | 'getGasPrice'
+  | 'getLogs'
+  | 'getTransaction'
+  | 'getTransactionCount'
+  | 'getTransactionReceipt'
+  | 'prepareTransactionRequest'
+  | 'readContract'
+  | 'sendRawTransaction'
+  | 'simulateContract'
+  | 'uninstallFilter'
+  | 'watchBlockNumber'
+  | 'watchContractEvent'
+> &
+  Pick<WalletActions, 'sendTransaction' | 'writeContract'>
 
 export type ComethAccountActions<
   TChain extends Chain | undefined = Chain | undefined,
@@ -125,24 +157,35 @@ export type ComethAccountActions<
    * const hash = await client.writeContract(request)
    */
   writeContract: <
+    TChain extends Chain | undefined,
     const TAbi extends Abi | readonly unknown[],
-    TFunctionName extends string,
+    TFunctionName extends ContractFunctionName<
+      TAbi,
+      "nonpayable" | "payable"
+    > = ContractFunctionName<TAbi, "nonpayable" | "payable">,
+    TArgs extends ContractFunctionArgs<
+      TAbi,
+      "nonpayable" | "payable",
+      TFunctionName
+    > = ContractFunctionArgs<TAbi, "nonpayable" | "payable", TFunctionName>,
     TChainOverride extends Chain | undefined = undefined
   >(
-    args: WriteContractParameters<
+    args: WriteContractWithConnectParameters<
       TAbi,
       TFunctionName,
+      TArgs,
       TChain,
-      TSmartAccount,
-      TChainOverride
+      TChainOverride,
+      TSmartAccount
     >
   ) => ReturnType<
     typeof writeContract<
-      TChain,
-      TSmartAccount,
       TAbi,
       TFunctionName,
-      TChainOverride
+      TArgs,
+      TChain,
+      TChainOverride,
+      TSmartAccount
     >
   >
   /**
@@ -207,14 +250,23 @@ export type ComethAccountActions<
   ) => ReturnType<typeof verifyMessage>,
 
   simulateContract: <
-    TChain extends Chain | undefined,
-    const TAbi extends Abi | readonly unknown[],
-    TFunctionName extends string,
-    TChainOverride extends Chain | undefined = undefined,
+    TAbi extends Abi | readonly unknown[] = Abi | readonly unknown[],
+    TFunctionName extends ContractFunctionName<
+      TAbi,
+      "nonpayable" | "payable"
+    > = ContractFunctionName<TAbi, "nonpayable" | "payable">,
+    TArgs extends ContractFunctionArgs<
+      TAbi,
+      "nonpayable" | "payable",
+      TFunctionName
+    > = ContractFunctionArgs<TAbi, "nonpayable" | "payable", TFunctionName>,
+    TChain extends Chain | undefined = Chain | undefined,
+    TChainOverride extends Chain | undefined = undefined
   >(
     args: SimulateContractParameters<
       TAbi,
       TFunctionName,
+      TArgs,
       TChain,
       TChainOverride
     >
@@ -233,7 +285,7 @@ export const connectWalletActions =
       TSmartAccount extends Account | undefined = Account | undefined
     >(
       client: Client<TTransport, TChain, TSmartAccount>
-    ): ComethAccountActions<TChain, TSmartAccount> => ({
+    ): any => ({
       sendTransaction: (args) =>
         sendTransaction(client, {
           ...args,
@@ -244,27 +296,24 @@ export const connectWalletActions =
           ...args,
           wallet
         } as sendBatchTransactionsWithConnectParameters),
-      writeContract: (args) =>
-        writeContract(client, {
-          ...args,
-          wallet
-        } as WriteContractWithConnectParameters),
+      writeContract: (args) => 
+        writeContract(client, {...args, wallet } as any),
       signMessage: (args) =>
         signMessage(client, {
           ...args,
           wallet
         } as SignMessageWithConnectParameters),
+      simulateContract: (args) =>
+        simulateContract(client, {
+          ...args,
+          wallet
+        } as SimulateContractWithConnectParameters),
       verifyMessage: (args) =>
         verifyMessage(client, {
           ...args,
           wallet,
           apiKey
-        } as VerifyMessageWithConnectParameters),
-      simulateContract: (args) =>
-        simulateContract(client, {
-          ...args,
-          wallet
-        } as SimulateContractWithConnectParameters)
+        } as VerifyMessageWithConnectParameters)
     })
 
-export { getTransaction, sendBatchTransactions, sendTransaction, simulateContract, verifyMessage, writeContract }
+export { getTransaction, sendBatchTransactions, sendTransaction, simulateContract, verifyMessage,writeContract }

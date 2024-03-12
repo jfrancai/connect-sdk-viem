@@ -31,8 +31,8 @@ const supportedChains = [
   gnosisChiado,
   polygonZkEvm,
   polygonZkEvmTestnet,
-  musterTestnet,
   muster,
+  musterTestnet,
   redstoneHolesky
 ]
 
@@ -60,7 +60,7 @@ export const getConnectViemClient = ({
   wallet,
   apiKey,
   rpc
-}: ConnectClientParams): ConnectClient => {
+}: ConnectClientParams): any => {
   const chain = supportedChains.find(
     (chain) => chain.id === wallet.chainId
   ) as Chain
