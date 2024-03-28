@@ -9,31 +9,45 @@ import {
 } from 'viem'
 import { Prettify } from 'viem/_types/types/utils'
 import {
+  arbitrum,
+  arbitrumSepolia,
   avalanche,
   avalancheFuji,
+  base,
+  baseSepolia,
   gnosis,
   gnosisChiado,
+  optimism,
+  optimismSepolia,
   polygon,
-  polygonMumbai,
-  polygonZkEvm,
-  polygonZkEvmTestnet
+  polygonMumbai
 } from 'viem/chains'
 
 import { ComethAccountActions, connectWalletActions } from '../customActions'
-import { muster, musterTestnet, redstoneHolesky } from '../customChains'
+import {
+  muster,
+  musterTestnet,
+  redstoneHolesky,
+  xlNetwork
+} from '../customChains'
 
 const supportedChains = [
+  arbitrum,
+  arbitrumSepolia,
   polygon,
   polygonMumbai,
   avalanche,
   avalancheFuji,
   gnosis,
   gnosisChiado,
-  polygonZkEvm,
-  polygonZkEvmTestnet,
+  base,
+  baseSepolia,
   muster,
   musterTestnet,
-  redstoneHolesky
+  redstoneHolesky,
+  optimism,
+  optimismSepolia,
+  xlNetwork
 ]
 
 export type ConnectClient<

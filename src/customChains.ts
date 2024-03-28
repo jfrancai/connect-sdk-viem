@@ -88,3 +88,22 @@ export const redstoneHolesky = defineChain({
     }
   }
 })
+
+export const xlNetwork = defineChain({
+  id: 3084,
+  name: 'XL Network',
+  network: 'xlNetwork',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'XL',
+    symbol: 'XL'
+  },
+  rpcUrls: {
+    default: {
+      http: ['']
+    },
+    public: {
+      http: ['']
+    }
+  }
+})
