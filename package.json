@@ -1,7 +1,8 @@
 {
   "name": "@cometh/connect-sdk-viem",
   "version": "2.0.1",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/mjs/index.js",
   "types": "dist/index.d.ts",
   "description": "Viem SDK Cometh Connect",
   "keywords": [
@@ -15,7 +16,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build:ts": "tsc",
+    "build:ts": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && ./fixup",
     "build": "rimraf dist && yarn build:ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "lint": "eslint . --ext .ts",
@@ -30,6 +31,12 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cometh-game/connect-sdk-viem/issues"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/mjs/index.js",
+      "require": "./dist/cjs/index.js"
+    }
   },
   "homepage": "https://github.com/cometh-game/connect-sdk-viem#readme",
   "devDependencies": {
